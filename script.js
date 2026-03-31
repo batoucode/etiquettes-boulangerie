@@ -169,8 +169,34 @@ function initializeSinglePage() {
     const width = labelWidthInput.value;
     const height = labelHeightInput.value;
     dimensionsText.textContent = `${width} cm × ${height} cm`;
-    singlePreview.style.width = `${width * 2.834}px`;
-    singlePreview.style.height = `${height * 2.834}px`;
+    
+    // Convertir cm en pixels (1cm = 28.34px)
+    let previewWidth = width * 2.834;
+    let previewHeight = height * 2.834;
+    
+    // Appliquer un zoom intelligent pour que l'aperçu reste visible
+    const MAX_PREVIEW = 400;  // Taille max en pixels
+    const MIN_PREVIEW = 100;  // Taille min en pixels
+    
+    // Si trop gros, réduire proportionnellement
+    if (previewWidth > MAX_PREVIEW) {
+      const ratio = MAX_PREVIEW / previewWidth;
+      previewWidth *= ratio;
+      previewHeight *= ratio;
+      console.log('  🔍 Zoom réduit (trop gros):', ratio.toFixed(2) + 'x');
+    }
+    
+    // Si trop petit, agrandir proportionnellement
+    if (previewWidth < MIN_PREVIEW) {
+      const ratio = MIN_PREVIEW / previewWidth;
+      previewWidth *= ratio;
+      previewHeight *= ratio;
+      console.log('  🔍 Zoom augmenté (trop petit):', ratio.toFixed(2) + 'x');
+    }
+    
+    console.log('  Taille finale:', previewWidth.toFixed(0) + 'px × ' + previewHeight.toFixed(0) + 'px');
+    singlePreview.style.width = previewWidth + 'px';
+    singlePreview.style.height = previewHeight + 'px';
     updatePreview();
   }
 
