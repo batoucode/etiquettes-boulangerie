@@ -39,10 +39,12 @@
         <div class="form-group">
           <label for="singleImage">Image du Gâteau</label>
           <div class="file-input-wrapper">
-            <input type="file" id="singleImage" accept="image/*">
-            <label for="singleImage" class="file-input-label">Choisir une image</label>
+            <input type="file" id="singleImage" accept=".jpg,.jpeg,.png,.webp,.gif">
+            <label for="singleImage" class="file-input-label">Choisir une image (Max: 500 KB)</label>
           </div>
-          <small id="imageFileName"></small>
+          <small id="imageFileName" style="color: var(--color-text-secondary); font-size: 0.85rem;">
+            Formats supportés: JPG, PNG, WebP, GIF
+          </small>
         </div>
 
         <div class="form-group">
