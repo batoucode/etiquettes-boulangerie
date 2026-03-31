@@ -384,7 +384,12 @@ html[data-theme="dark"] .label-preview {
 }
 
 .label-content img {
-  margin: 0.5rem auto;
+  max-width: 90%;
+  max-height: 40%;
+  object-fit: contain;
+  margin: 10px auto;
+  display: block;
+  border-radius: 4px;
 }
 
 .label-content h3 {
