@@ -26,6 +26,8 @@ function updateThemeIcon() {
 // PAGE SINGLE (PERSONNALISER UNE ÉTIQUETTE)
 // =====================================================
 
+console.log('📜 Script chargé - Vérification de la page...');
+
 // Vérifier si nous sommes sur la page single
 function isCurrentPageSingle() {
   const path = window.location.pathname;
@@ -74,13 +76,23 @@ function initializeSinglePage() {
 
   let currentImageData = null;
 
+  console.log('✅ Tous les éléments sélectionnés avec succès');
+  console.log('  Elements:', {
+    singleNameInput: singleNameInput ? 'OK' : 'MANQUANT',
+    singlePriceInput: singlePriceInput ? 'OK' : 'MANQUANT',
+    previewName: previewName ? 'OK' : 'MANQUANT',
+    previewPrice: previewPrice ? 'OK' : 'MANQUANT'
+  });
+
   // ===== FONCTIONS =====
 
   function formatPrice(price) {
-    return new Intl.NumberFormat('fr-FR', {
+    const formatted = new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR'
     }).format(price);
+    console.log('  💰 formatPrice(' + price + ') = ' + formatted);
+    return formatted;
   }
 
   function hexToRgb(hex) {
@@ -93,59 +105,72 @@ function initializeSinglePage() {
   }
 
   function updatePreview() {
-    console.log('🔄 Mise à jour de l\'aperçu...');
-    
-    const name = singleNameInput.value || 'Nom du gâteau';
-    const price = parseFloat(singlePriceInput.value) || 0;
-    const bgColor = backgroundColorInput.value;
+    try {
+      console.log('🔄 Mise à jour de l\'aperçu démarrée...');
+      
+      const nameValue = singleNameInput.value;
+      const priceValue = singlePriceInput.value;
+      const name = nameValue || 'Nom du gâteau';
+      const price = parseFloat(priceValue) || 0;
+      const bgColor = backgroundColorInput.value;
 
-    // Mettre à jour le texte
-    previewName.textContent = name;
-    previewPrice.textContent = formatPrice(price);
+      console.log('  Valeurs saisies:', { nameValue, priceValue, name, price, bgColor });
+      console.log('  Avant - previewName.textContent:', previewName.textContent);
+      console.log('  Avant - previewPrice.textContent:', previewPrice.textContent);
 
-    // Mettre à jour l'image
-    if (currentImageData) {
-      previewImage.src = currentImageData;
-      previewImage.style.display = 'block';
-      previewImage.style.maxWidth = '90%';
-      previewImage.style.maxHeight = '40%';
-      previewImage.style.objectFit = 'contain';
-      previewImage.style.margin = '10px auto';
-    } else {
-      previewImage.style.display = 'none';
+      // Mettre à jour le texte
+      previewName.textContent = name;
+      const formattedPrice = formatPrice(price);
+      previewPrice.textContent = formattedPrice;
+      
+      console.log('  Après - previewName.textContent:', previewName.textContent);
+      console.log('  Après - previewPrice.textContent:', previewPrice.textContent);
+
+      // Mettre à jour l'image
+      if (currentImageData) {
+        previewImage.src = currentImageData;
+        previewImage.style.display = 'block';
+        previewImage.style.maxWidth = '90%';
+        previewImage.style.maxHeight = '40%';
+        previewImage.style.objectFit = 'contain';
+        previewImage.style.margin = '10px auto';
+        console.log('  ✅ Image affichée');
+      } else {
+        previewImage.style.display = 'none';
+        console.log('  ⚠️ Pas d\'image');
+      }
+
+      // Mettre à jour le fond
+      const labelContent = document.getElementById('labelContent');
+      labelContent.style.backgroundColor = bgColor;
+
+      // Ajuster la couleur du texte
+      const rgb = hexToRgb(bgColor);
+      const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+      labelContent.style.color = brightness > 128 ? '#333333' : '#ffffff';
+      console.log('  🎨 Couleur de fond et texte mises à jour');
+
+      // Sauvegarder
+      localStorage.setItem('singleLabel', JSON.stringify({
+        name, price, image: currentImageData, bgColor,
+        width: labelWidthInput.value,
+        height: labelHeightInput.value
+      }));
+
+      console.log('✅ Aperçu mis à jour avec succès');
+    } catch (error) {
+      console.error('❌ ERREUR dans updatePreview():', error);
+      console.error(error.stack);
     }
-
-    // Mettre à jour le fond
-    const labelContent = document.getElementById('labelContent');
-    labelContent.style.backgroundColor = bgColor;
-
-    // Ajuster la couleur du texte selon la luminosité
-    const rgb = hexToRgb(bgColor);
-    const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-    labelContent.style.color = brightness > 128 ? '#333333' : '#ffffff';
-
-    // Sauvegarder dans localStorage
-    localStorage.setItem('singleLabel', JSON.stringify({
-      name,
-      price,
-      image: currentImageData,
-      bgColor,
-      width: labelWidthInput.value,
-      height: labelHeightInput.value
-    }));
-
-    console.log('✅ Aperçu mis à jour');
   }
 
   function updateDimensions() {
+    console.log('📏 Mise à jour des dimensions');
     const width = labelWidthInput.value;
     const height = labelHeightInput.value;
     dimensionsText.textContent = `${width} cm × ${height} cm`;
-
-    // Mettre à jour la taille de l'aperçu
-    singlePreview.style.width = `${width * 2.834}px`; // 1cm = 28.34px
+    singlePreview.style.width = `${width * 2.834}px`;
     singlePreview.style.height = `${height * 2.834}px`;
-
     updatePreview();
   }
 
@@ -158,35 +183,38 @@ function initializeSinglePage() {
   }
 
   // ===== EVENT LISTENERS =====
+  console.log('🔗 Attachement des event listeners...');
 
-  // Inputs de texte
   singleNameInput.addEventListener('input', () => {
     console.log('📝 Nom changé:', singleNameInput.value);
     updatePreview();
   });
+  
   singlePriceInput.addEventListener('input', () => {
     console.log('💰 Prix changé:', singlePriceInput.value);
     updatePreview();
   });
   
-  // Inputs de dimensions
   labelWidthInput.addEventListener('input', () => {
     console.log('📏 Largeur changée:', labelWidthInput.value);
     updateDimensions();
   });
+  
   labelHeightInput.addEventListener('input', () => {
     console.log('📏 Hauteur changée:', labelHeightInput.value);
     updateDimensions();
   });
   
-  // Couleur de fond
   backgroundColorInput.addEventListener('input', () => {
     console.log('🎨 Couleur changée:', backgroundColorInput.value);
     updatePreview();
   });
   
-  // Boutons
-  updatePreviewBtn.addEventListener('click', updatePreview);
+  updatePreviewBtn.addEventListener('click', () => {
+    console.log('🔄 Bouton "Actualiser l\'aperçu" cliqué');
+    updatePreview();
+  });
+  
   printSingleBtn.addEventListener('click', printLabel);
   downloadSinglePdfBtn.addEventListener('click', downloadPdf);
 
@@ -194,7 +222,7 @@ function initializeSinglePage() {
   singleImageInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-      const maxSize = 500 * 1024; // 500 KB
+      const maxSize = 500 * 1024;
       const supportedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
       
       if (!supportedTypes.includes(file.type)) {
@@ -212,6 +240,7 @@ function initializeSinglePage() {
       const reader = new FileReader();
       reader.onload = (event) => {
         currentImageData = event.target.result;
+        console.log('🖼️ Image chargée:', file.name);
         updatePreview();
       };
       reader.onerror = () => {
@@ -222,8 +251,8 @@ function initializeSinglePage() {
   });
 
   // ===== INITIALISATION =====
+  console.log('🎯 Initialisation de la page...');
   
-  // Charger les données sauvegardées
   const savedLabel = localStorage.getItem('singleLabel');
   if (savedLabel) {
     const data = JSON.parse(savedLabel);
@@ -241,128 +270,4 @@ function initializeSinglePage() {
   }
 
   console.log('✅ Page single.html initialisée avec succès');
-}
-
-// =====================================================
-// PAGE INDEX (PLUSIEURS ÉTIQUETTES)
-// =====================================================
-
-function isCurrentPageIndex() {
-  const path = window.location.pathname;
-  return path.endsWith('/') || path.endsWith('index.html') || !path.includes('single.html');
-}
-
-if (isCurrentPageIndex() && document.getElementById('addLabel')) {
-  console.log('✅ Page index.html détectée');
-  
-  const productNameInput = document.getElementById('productName');
-  const basePriceInput = document.getElementById('basePrice');
-  const quantityInput = document.getElementById('quantity');
-  const imageUrlInput = document.getElementById('imageUrl');
-  const addLabelBtn = document.getElementById('addLabel');
-  const printAllBtn = document.getElementById('printAll');
-  const downloadPdfBtn = document.getElementById('downloadPdf');
-  const preview = document.getElementById('preview');
-
-  let labels = JSON.parse(localStorage.getItem('labels')) || [];
-
-  function formatPrice(price) {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(price);
-  }
-
-  function loadLabels() {
-    preview.innerHTML = '';
-
-    if (labels.length === 0) {
-      printAllBtn.style.display = 'none';
-      downloadPdfBtn.style.display = 'none';
-      preview.innerHTML = '<p style="grid-column: 1/-1; color: var(--color-text-secondary);">Aucune étiquette créée</p>';
-      return;
-    }
-
-    printAllBtn.style.display = 'inline-block';
-    downloadPdfBtn.style.display = 'inline-block';
-
-    labels.forEach((label, index) => {
-      const card = document.createElement('div');
-      card.className = 'label-card';
-      card.innerHTML = `
-        ${label.image ? `<img src="${label.image}" alt="${label.name}" class="label-image">` : '<div class="label-image" style="background: linear-gradient(135deg, #d4a574, #8b4513);"></div>'}
-        <div class="label-info">
-          <h3>${label.name}</h3>
-          <p class="label-price">${formatPrice(label.price)}</p>
-        </div>
-      `;
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = '✕';
-      deleteBtn.style.cssText = `
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background: rgba(255, 0, 0, 0.7);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
-        display: none;
-      `;
-      deleteBtn.addEventListener('click', () => {
-        labels.splice(index, 1);
-        localStorage.setItem('labels', JSON.stringify(labels));
-        loadLabels();
-      });
-
-      card.style.position = 'relative';
-      card.appendChild(deleteBtn);
-      card.addEventListener('mouseenter', () => deleteBtn.style.display = 'block');
-      card.addEventListener('mouseleave', () => deleteBtn.style.display = 'none');
-
-      preview.appendChild(card);
-    });
-  }
-
-  addLabelBtn.addEventListener('click', () => {
-    const name = productNameInput.value.trim();
-    const price = parseFloat(basePriceInput.value);
-    const quantity = parseInt(quantityInput.value) || 1;
-    const image = imageUrlInput.value.trim();
-
-    if (!name || !price) {
-      alert('Veuillez remplir le nom et le prix');
-      return;
-    }
-
-    for (let i = 0; i < quantity; i++) {
-      labels.push({
-        id: Date.now() + i,
-        name,
-        price,
-        image
-      });
-    }
-
-    localStorage.setItem('labels', JSON.stringify(labels));
-    loadLabels();
-
-    productNameInput.value = '';
-    basePriceInput.value = '';
-    quantityInput.value = '1';
-    imageUrlInput.value = '';
-  });
-
-  printAllBtn.addEventListener('click', () => {
-    window.print();
-  });
-
-  downloadPdfBtn.addEventListener('click', () => {
-    alert('Cliquez sur "Imprimer", puis choisissez "Enregistrer en PDF".');
-  });
-
-  loadLabels();
 }
