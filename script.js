@@ -209,6 +209,10 @@ if (isSinglePage && document.getElementById('updatePreview')) {
     if (currentImageData) {
       previewImage.src = currentImageData;
       previewImage.style.display = 'block';
+      previewImage.style.maxWidth = '90%';
+      previewImage.style.maxHeight = '40%';
+      previewImage.style.objectFit = 'contain';
+      previewImage.style.margin = '10px auto';
     } else {
       previewImage.style.display = 'none';
     }
