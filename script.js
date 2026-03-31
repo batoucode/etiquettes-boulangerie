@@ -160,15 +160,30 @@ function initializeSinglePage() {
   // ===== EVENT LISTENERS =====
 
   // Inputs de texte
-  singleNameInput.addEventListener('input', updatePreview);
-  singlePriceInput.addEventListener('input', updatePreview);
+  singleNameInput.addEventListener('input', () => {
+    console.log('📝 Nom changé:', singleNameInput.value);
+    updatePreview();
+  });
+  singlePriceInput.addEventListener('input', () => {
+    console.log('💰 Prix changé:', singlePriceInput.value);
+    updatePreview();
+  });
   
   // Inputs de dimensions
-  labelWidthInput.addEventListener('input', updateDimensions);
-  labelHeightInput.addEventListener('input', updateDimensions);
+  labelWidthInput.addEventListener('input', () => {
+    console.log('📏 Largeur changée:', labelWidthInput.value);
+    updateDimensions();
+  });
+  labelHeightInput.addEventListener('input', () => {
+    console.log('📏 Hauteur changée:', labelHeightInput.value);
+    updateDimensions();
+  });
   
   // Couleur de fond
-  backgroundColorInput.addEventListener('input', updatePreview);
+  backgroundColorInput.addEventListener('input', () => {
+    console.log('🎨 Couleur changée:', backgroundColorInput.value);
+    updatePreview();
+  });
   
   // Boutons
   updatePreviewBtn.addEventListener('click', updatePreview);
