@@ -188,15 +188,70 @@ if (isSinglePage && document.getElementById('updatePreview')) {
   singleImageInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-      imageFileName.textContent = `Fichier sélectionné: ${file.name}`;
+      // Vérifier le type et la taille
+      const maxSize = 500 * 1024; // 500 KB
+      const supportedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      
+      if (!supportedTypes.includes(file.type)) {
+        imageFileName.textContent = '❌ Format non supporté. Utilisez JPG, PNG, WebP ou GIF';
+        return;
+      }
+      
+      if (file.size > maxSize) {
+        imageFileName.textContent = `❌ Image trop grosse (${(file.size / 1024 / 1024).toFixed(2)} MB). Max: 500 KB`;
+        return;
+      }
+      
+      imageFileName.textContent = `✅ ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+      
       const reader = new FileReader();
       reader.onload = (event) => {
         currentImageData = event.target.result;
         updatePreview();
       };
+      reader.onerror = () => {
+        imageFileName.textContent = '❌ Erreur lors de la lecture du fichier';
+      };
       reader.readAsDataURL(file);
     }
   });
+
+  // Fonction pour compresser les images
+  function compressImage(base64String, callback, maxSizeKB = 500) {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      
+      // Réduire si trop gros
+      if (width > 800) {
+        height = (height * 800) / width;
+        width = 800;
+      }
+      
+      canvas.width = width;
+      canvas.height = height;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      // Compresser progressivement jusqu'à atteindre la taille limite
+      let quality = 0.9;
+      let compressed = canvas.toDataURL('image/jpeg', quality);
+      
+      while (compressed.length > maxSizeKB * 1370 && quality > 0.1) {
+        quality -= 0.1;
+        compressed = canvas.toDataURL('image/jpeg', quality);
+      }
+      
+      callback(compressed);
+    };
+    img.onerror = () => {
+      imageFileName.textContent = '❌ Erreur lors du chargement de l'image';
+    };
+    img.src = base64String;
+  }
 
   function updatePreview() {
     const name = singleNameInput.value || 'Nom du gâteau';
