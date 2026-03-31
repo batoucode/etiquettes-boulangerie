@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personnaliser Étiquette - Boulangerie</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>🍰 Étiquettes Boulangerie</h1>
+      <button id="themeToggle" class="theme-toggle" aria-label="Basculer le thème">
+        <span class="theme-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <nav>
+    <a href="index.html" class="nav-link">Plusieurs Étiquettes</a>
+    <a href="single.html" class="nav-link active">Personnaliser Une Étiquette</a>
+  </nav>
+
+  <main>
+    <div class="single-page-container">
+      <section class="form-section">
+        <h2>Personnaliser l'Étiquette</h2>
+
+        <div class="form-group">
+          <label for="singleName">Nom du Gâteau</label>
+          <input type="text" id="singleName" placeholder="Ex: Tarte aux Framboises" value="Tarte aux Framboises">
+        </div>
+
+        <div class="form-group">
+          <label for="singlePrice">Prix (€)</label>
+          <input type="number" id="singlePrice" placeholder="8.50" value="8.50" step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label for="singleImage">Image du Gâteau</label>
+          <div class="file-input-wrapper">
+            <input type="file" id="singleImage" accept="image/*">
+            <label for="singleImage" class="file-input-label">Choisir une image</label>
+          </div>
+          <small id="imageFileName"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="labelWidth">Largeur (cm)</label>
+          <input type="number" id="labelWidth" value="10" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label for="labelHeight">Hauteur (cm)</label>
+          <input type="number" id="labelHeight" value="10" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label for="backgroundColor">Couleur de Fond</label>
+          <input type="color" id="backgroundColor" value="#ffffff">
+        </div>
+
+        <div class="button-group">
+          <button id="updatePreview" class="btn btn-primary">Actualiser l'Aperçu</button>
+          <button id="printSingle" class="btn btn-secondary">Imprimer</button>
+          <button id="downloadSinglePdf" class="btn btn-secondary">Télécharger PDF</button>
+        </div>
+      </section>
+
+      <section class="preview-section">
+        <h2>Aperçu</h2>
+        <div id="singlePreview" class="label-preview">
+          <div class="label-content" id="labelContent">
+            <img id="previewImage" src="" alt="" style="max-width: 80%; margin: 5px auto; display: none;">
+            <h3 id="previewName">Tarte aux Framboises</h3>
+            <p id="previewPrice" class="price">8,50 €</p>
+          </div>
+        </div>
+        <div class="dimensions-info">
+          <p id="dimensionsText">10 cm × 10 cm</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
