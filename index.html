@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étiquettes - Boulangerie</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>🍰 Étiquettes Boulangerie</h1>
+      <button id="themeToggle" class="theme-toggle" aria-label="Basculer le thème">
+        <span class="theme-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <nav>
+    <a href="index.html" class="nav-link active">Plusieurs Étiquettes</a>
+    <a href="single.html" class="nav-link">Personnaliser Une Étiquette</a>
+  </nav>
+
+  <main>
+    <section class="container">
+      <h2>Créer Plusieurs Étiquettes</h2>
+
+      <div class="form-group">
+        <label for="productName">Nom du Gâteau</label>
+        <input type="text" id="productName" placeholder="Ex: Croissant, Tarte aux Pommes...">
+      </div>
+
+      <div class="form-group">
+        <label for="basePrice">Prix de Base (€)</label>
+        <input type="number" id="basePrice" placeholder="5.50" step="0.01">
+      </div>
+
+      <div class="form-group">
+        <label for="quantity">Nombre d'Étiquettes</label>
+        <input type="number" id="quantity" min="1" value="1">
+      </div>
+
+      <div class="form-group">
+        <label for="imageUrl">URL de l'Image (optionnel)</label>
+        <input type="url" id="imageUrl" placeholder="https://exemple.com/image.jpg">
+      </div>
+
+      <button id="addLabel" class="btn btn-primary">Ajouter Étiquettes</button>
+      <button id="printAll" class="btn btn-secondary" style="display: none;">Imprimer Tout</button>
+      <button id="downloadPdf" class="btn btn-secondary" style="display: none;">Télécharger PDF</button>
+    </section>
+
+    <section class="container">
+      <h2>Aperçu</h2>
+      <div id="preview" class="preview-grid"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
